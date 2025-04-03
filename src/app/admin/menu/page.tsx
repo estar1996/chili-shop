@@ -15,11 +15,7 @@ export default function AdminMenu() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
   );
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  async function fetchProducts() {
+  const fetchProducts = async () => {
     try {
       let query = supabase.from("products").select("*");
       
@@ -42,9 +38,13 @@ export default function AdminMenu() {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  async function deleteProduct(id: number) {
+  useEffect(() => {
+    fetchProducts();
+  }, [isFeatured]);
+
+  const deleteProduct = async (id: number) => {
     if (!confirm("정말 이 상품을 삭제하시겠습니까?")) {
       return;
     }
@@ -64,24 +64,23 @@ export default function AdminMenu() {
       console.error("Error in deleteProduct:", error);
       toast.error("상품 삭제 중 오류가 발생했습니다.");
     }
-  }
+  };
 
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">상품 관리</h1>
       
       <div className="mb-4">
-        <form className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2">
           <Checkbox
             id="featured"
             label="인기상품만 보기"
             checked={isFeatured}
             onChange={(e) => {
               setIsFeatured(e.target.checked);
-              fetchProducts();
             }}
           />
-        </form>
+        </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
