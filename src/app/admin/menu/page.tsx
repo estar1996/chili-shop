@@ -5,8 +5,17 @@ import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 import { createClient } from "@supabase/supabase-js";
 
-export default function AdminMenu() {
-  const [products, setProducts] = useState<any[]>([]);
+interface Product {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  image_url: string | null;
+}
+
+export default function AdminMenuPage() {
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [isFeatured, setIsFeatured] = useState(false);
   
