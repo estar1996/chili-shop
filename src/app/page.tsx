@@ -1,103 +1,192 @@
-import Image from "next/image";
+"use client";
+
+import { useState, useEffect } from 'react';
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { createClient } from "@supabase/supabase-js";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const supabase = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+        );
+        
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        setProducts(data || []);
+      } catch (error) {
+        console.error('상품 목록 조회 중 오류가 발생했습니다:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  return (
+    <main className="flex min-h-screen flex-col">
+      {/* 헤더 */}
+      <header className="border-b bg-white sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-3">
+          <nav className="flex items-center justify-between">
+            <Link href="/" className="text-xl font-bold flex items-center gap-2">
+              🌶️ 놀라운 고추
+            </Link>
+            <div className="flex items-center gap-6">
+              <Link href="/products" className="hover:text-green-600">상품</Link>
+              <Link href="/inquiry" className="hover:text-green-600">문의하기</Link>
+              <Link href="/admin" className="hover:text-green-600">관리자</Link>
+            </div>
+          </nav>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+      </header>
+
+      {/* 히어로 섹션 */}
+      <section className="relative bg-gradient-to-r from-red-500 to-red-700 text-white">
+        <div className="absolute inset-0 bg-black/30"></div>
+        <div className="container mx-auto px-4 py-20 relative">
+          <div className="max-w-3xl">
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">
+              대한민국 대표 고춧가루<br />
+              명품 고춧가루
+            </h1>
+            <p className="text-lg md:text-xl mb-8 text-gray-100">
+              3대째 이어온 전통 방식으로<br />
+              정성껏 만든 최고급 고춧가루를 만나보세요
+            </p>
+            <Button size="lg" className="bg-white text-red-600 hover:bg-gray-100">
+              지금 구매하기
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* 특징 섹션 */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center p-6">
+              <div className="text-4xl mb-4">🌶️</div>
+              <h3 className="text-xl font-bold mb-2">최상급 원료</h3>
+              <p className="text-gray-600">
+                햇고추만을 엄선하여<br />
+                신선한 품질을 보장합니다
+              </p>
+            </div>
+            <div className="text-center p-6">
+              <div className="text-4xl mb-4">👨‍🌾</div>
+              <h3 className="text-xl font-bold mb-2">전통 방식</h3>
+              <p className="text-gray-600">
+                3대째 이어온 전통 제조 방식으로<br />
+                깊은 맛을 선사합니다
+              </p>
+            </div>
+            <div className="text-center p-6">
+              <div className="text-4xl mb-4">✨</div>
+              <h3 className="text-xl font-bold mb-2">품질 보증</h3>
+              <p className="text-gray-600">
+                HACCP 인증을 받은 시설에서<br />
+                안전하게 생산됩니다
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 상품 목록 */}
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">인기 상품</h2>
+            <p className="text-gray-600 mb-8">최고 품질의 국내산 고춧가루를 만나보세요</p>
+            <div className="flex justify-center gap-4">
+              <Link href="/products" className="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700 transition-colors">
+                전체 상품 보기
+              </Link>
+              <Link href="/inquiry" className="bg-gray-600 text-white px-6 py-2 rounded-md hover:bg-gray-700 transition-colors">
+                문의하기
+              </Link>
+            </div>
+          </div>
+          
+          {loading ? (
+            <div className="text-center py-12">데이터를 불러오는 중입니다...</div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {products.map((product) => (
+                <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
+                  <Link href={`/products/${product.id}`}>
+                    <div className="aspect-w-4 aspect-h-3 bg-gray-200">
+                      {product.image_url ? (
+                        <img
+                          src={product.image_url}
+                          alt={product.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-4xl">
+                          🌶️
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-4">
+                      <div className="text-xs text-gray-500 mb-1">{product.category}</div>
+                      <h3 className="font-medium mb-2">{product.name}</h3>
+                      <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                        {product.description}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold">{product.price?.toLocaleString()}원</span>
+                        <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white">
+                          구매하기
+                        </Button>
+                      </div>
+                    </div>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* 푸터 */}
+      <footer className="bg-gray-900 text-white mt-auto">
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+              <h3 className="text-lg font-bold mb-4">명품 고춧가루</h3>
+              <p className="text-gray-400">최고 품질의 국내산 고춧가루</p>
+            </div>
+            <div>
+              <h3 className="text-lg font-bold mb-4">연락처</h3>
+              <p className="text-gray-400">전화: 010-1234-5678</p>
+              <p className="text-gray-400">이메일: info@chilishop.com</p>
+            </div>
+            <div>
+              <h3 className="text-lg font-bold mb-4">빠른 링크</h3>
+              <ul className="space-y-2">
+                <li><Link href="/products" className="text-gray-400 hover:text-white">상품</Link></li>
+                <li><Link href="/inquiry" className="text-gray-400 hover:text-white">문의하기</Link></li>
+              </ul>
+            </div>
+          </div>
+          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+            © 2024 명품 고춧가루. All rights reserved.
+          </div>
+        </div>
       </footer>
-    </div>
+    </main>
   );
 }
