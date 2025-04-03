@@ -251,7 +251,7 @@ export default function ContactPage() {
                           <Checkbox 
                             id="privacy" 
                             checked={formData.agreeToPrivacyPolicy}
-                            onCheckedChange={handleCheckboxChange}
+                            onChange={(e) => handleCheckboxChange(e.target.checked)}
                           />
                           <Label htmlFor="privacy" className="text-sm text-gray-600 cursor-pointer">
                             개인정보 수집 및 이용에 동의합니다. 수집된 정보는 문의 답변을 위해서만 사용됩니다. <span className="text-red-500">*</span>

@@ -5,8 +5,19 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@supabase/supabase-js";
 
+interface Product {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  image_url: string | null;
+  weight: string;
+  stock: number;
+}
+
 export default function Home() {
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

@@ -6,13 +6,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { createClient } from "@supabase/supabase-js";
 
 export default function AdminMenu() {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isFeatured, setIsFeatured] = useState(false);
   
   const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
   );
 
   useEffect(() => {
@@ -44,7 +44,7 @@ export default function AdminMenu() {
     }
   }
 
-  async function deleteProduct(id) {
+  async function deleteProduct(id: number) {
     if (!confirm("정말 이 상품을 삭제하시겠습니까?")) {
       return;
     }
